@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<robot name="ur" xmlns:xacro="http://wiki.ros.org/xacro">
+  <!--
+    Base UR robot series xacro macro.
+
+    NOTE this is NOT a URDF. It cannot directly be loaded by consumers
+    expecting a flattened '.urdf' file. See the top-level '.xacro' for that
+    (but note that .xacro must still be processed by the xacro command).
+
+    This file models the base kinematic chain of a UR robot, which then gets
+    parameterised by various configuration files to convert it into a UR3(e),
+    UR5(e), UR10(e) or UR16e.
+
+    NOTE the default kinematic parameters (i.e., link lengths, frame locations,
+    offsets, etc) do not correspond to any particular robot. They are defaults
+    only. There WILL be non-zero offsets between the Forward Kinematics results
+    in TF (i.e., robot_state_publisher) and the values reported by the Teach
+    Pendant.
+
+    For accurate (and robot-specific) transforms, the 'kinematics_parameters_file'
+    parameter MUST point to a .yaml file containing the appropriate values for
+    the targeted robot.
+
+    If using the UniversalRobots/Universal_Robots_ROS_Driver, follow the steps
+    described in the readme of that repository to extract the kinematic
+    calibration from the controller and generate the required .yaml file.
+
+    Main author of the migration to yaml configs Ludovic Delval.
+
+    Contributors to previous versions (in no particular order)
+
+     - Denis Stogl
+     - Lovro Ivanov
+     - Felix Messmer
+     - Kelsey Hawkins
+     - Wim Meeussen
+     - Shaun Edwards
+     - Nadia Hammoudeh Garcia
+     - Dave Hershberger
+     - G. vd. Hoorn
+     - Philip Long
+     - Dave Coleman
+     - Miguel Prada
+     - Mathias Luedtke
+     - Marcel Schnirring
+     - Felix von Drigalski
+     - Felix Exner
+     - Jimmy Da Silva
+     - Ajit Krisshna N L
+     - Muhammad Asif Rana
+  -->
+
+  <!-- create link fixed to the "world" -->
+
+  <link name="world" />
+  <xacro:include filename="$(find ur_description)/urdf/ur5e_japan.urdf.xacro"/>
+  <xacro:include filename="$(find ur_description)/urdf/ur30_japan.urdf.xacro"/>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <!-- right wall -->
+  <link name="mounting_ur5e_link">
+      <visual>
+          <geometry>
+              <box size="0.5 0.5 0.5" />
+          </geometry>
+          <material name="white"/>
+      </visual>
+  </link>
+
+  <joint name="ur5emount_joint" type="fixed">
+    <origin xyz="0 -1 0.25" rpy="0 0 0"/>
+    <parent link="world" />
+    <child link="mounting_ur5e_link" />
+  </joint>
+
+  <!-- right wall -->
+  <link name="mounting_ur30_link">
+      <visual>
+          <geometry>
+              <box size="0.5 0.5 0.5" />
+          </geometry>
+          <material name="white"/>
+      </visual>
+  </link>
+
+  <joint name="ur30mount_joint" type="fixed">
+    <origin xyz="0 1 0.25" rpy="0 0 0"/>
+    <parent link="world" />
+    <child link="mounting_ur30_link" />
+  </joint>
+
+
+  <!-- table -->
+  <link name="table_between_robots_link">
+      <visual>
+          <geometry>
+              <box size="1.5 1.0 0.5" />
+          </geometry>
+          <material name="white"/>
+      </visual>
+  </link>
+
+  <joint name="table_between_robots_joint" type="fixed">
+    <origin xyz="0.5 0 0.25" rpy="0 0 0"/>
+    <parent link="world" />
+    <child link="table_between_robots_link" />
+  </joint>
+
+
+  <!-- add walls -->
+  <link name="wall_behind_link">
+      <visual>
+          <geometry>
+              <mesh filename="package://ur_description/meshes/japan_demo/wall.dae"/>
+          </geometry>
+          <material name="white"/>
+      </visual>
+  </link>
+
+  <joint name="wall_behind_joint" type="fixed">
+    <origin xyz="0.5 -2.0 1.25" rpy="0 0 0"/>
+    <parent link="world" />
+    <child link="wall_behind_link" />
+  </joint>
+
+  <link name="wall2_link">
+      <visual>
+          <geometry>
+              <mesh filename="package://ur_description/meshes/japan_demo/wall.dae"/>
+          </geometry>
+          <material name="white"/>
+      </visual>
+  </link>
+
+  <joint name="wall2_joint" type="fixed">
+    <origin xyz="-1.75 0.175 1.25" rpy="0 0 1.57"/>
+    <parent link="world" />
+    <child link="wall2_link" />
+  </joint>
+
+</robot>
